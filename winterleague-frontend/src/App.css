@@ -1,5 +1,12 @@
 .App {
-  text-align: center;
+  /* Overlay + background image combined */
+  background-repeat: no-repeat;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .App-logo {

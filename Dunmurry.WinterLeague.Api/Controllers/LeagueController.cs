@@ -1,5 +1,5 @@
+using Dunmurry.WinterLeague.Shared.Data;
 using Microsoft.AspNetCore.Mvc;
-using Dunmurry.WinterLeague.Api.Data;
 
 namespace Dunmurry.WinterLeague.Api.Controllers
 {

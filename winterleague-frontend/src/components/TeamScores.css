@@ -1,16 +1,18 @@
 /* TeamScores.css */
 .team-scores {
-  max-width: 600px;
-  margin: 20px auto;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
   padding: 16px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   background-color: #fafafa;
+  box-sizing: border-box;
 }
 
 .team-scores table {
   width: 100%;
-  border-collapse: collapse;
+  table-layout: auto;  
 }
 
 .team-scores th, .team-scores td {
@@ -44,4 +46,15 @@
 
 .team-scores button:hover {
   background-color: #0d47a1;
+}
+
+.team-scores-container {
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+@media (max-width: 600px) {
+  .team-scores table {
+    font-size: 0.6rem; /* smaller text on mobile */
+  }
 }

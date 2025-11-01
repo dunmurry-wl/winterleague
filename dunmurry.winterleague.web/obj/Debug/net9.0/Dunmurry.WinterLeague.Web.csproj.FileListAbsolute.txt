@@ -1,0 +1,15 @@
+/Users/steveneccles/Documents/GitHub/Dunmurry.WinterLeague/dunmurry.winterleague.web/bin/Debug/net9.0/Dunmurry.WinterLeague.Web
+/Users/steveneccles/Documents/GitHub/dunmurry.winterleague/Dunmurry.WinterLeague.Web/bin/Debug/net9.0/Dunmurry.WinterLeague.Web.deps.json
+/Users/steveneccles/Documents/GitHub/dunmurry.winterleague/Dunmurry.WinterLeague.Web/bin/Debug/net9.0/Dunmurry.WinterLeague.Web.runtimeconfig.json
+/Users/steveneccles/Documents/GitHub/Dunmurry.WinterLeague/dunmurry.winterleague.web/bin/Debug/net9.0/Dunmurry.WinterLeague.Web.dll
+/Users/steveneccles/Documents/GitHub/Dunmurry.WinterLeague/dunmurry.winterleague.web/bin/Debug/net9.0/Dunmurry.WinterLeague.Web.pdb
+/Users/steveneccles/Documents/GitHub/Dunmurry.WinterLeague/dunmurry.winterleague.web/obj/Debug/net9.0/Dunmurry.WinterLeague.Web.GeneratedMSBuildEditorConfig.editorconfig
+/Users/steveneccles/Documents/GitHub/Dunmurry.WinterLeague/dunmurry.winterleague.web/obj/Debug/net9.0/Dunmurry.WinterLeague.Web.AssemblyInfoInputs.cache
+/Users/steveneccles/Documents/GitHub/Dunmurry.WinterLeague/dunmurry.winterleague.web/obj/Debug/net9.0/Dunmurry.WinterLeague.Web.AssemblyInfo.cs
+/Users/steveneccles/Documents/GitHub/Dunmurry.WinterLeague/dunmurry.winterleague.web/obj/Debug/net9.0/Dunmurry.WinterLeague.Web.csproj.CoreCompileInputs.cache
+/Users/steveneccles/Documents/GitHub/Dunmurry.WinterLeague/dunmurry.winterleague.web/obj/Debug/net9.0/Dunmurry.WinterLeague.Web.sourcelink.json
+/Users/steveneccles/Documents/GitHub/Dunmurry.WinterLeague/dunmurry.winterleague.web/obj/Debug/net9.0/Dunmurry.WinterLeague.Web.dll
+/Users/steveneccles/Documents/GitHub/Dunmurry.WinterLeague/dunmurry.winterleague.web/obj/Debug/net9.0/refint/Dunmurry.WinterLeague.Web.dll
+/Users/steveneccles/Documents/GitHub/Dunmurry.WinterLeague/dunmurry.winterleague.web/obj/Debug/net9.0/Dunmurry.WinterLeague.Web.pdb
+/Users/steveneccles/Documents/GitHub/dunmurry.winterleague/Dunmurry.WinterLeague.Web/obj/Debug/net9.0/Dunmurry.WinterLeague.Web.genruntimeconfig.cache
+/Users/steveneccles/Documents/GitHub/dunmurry.winterleague/Dunmurry.WinterLeague.Web/obj/Debug/net9.0/ref/Dunmurry.WinterLeague.Web.dll

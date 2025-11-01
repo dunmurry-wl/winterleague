@@ -1,0 +1,47 @@
+/* TeamScores.css */
+.team-scores {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  background-color: #fafafa;
+}
+
+.team-scores table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.team-scores th, .team-scores td {
+  padding: 10px;
+}
+
+.team-scores th {
+  background-color: #64b5f6;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.team-scores tr:nth-child(even) {
+  background-color: #f0f0f0;
+}
+
+.team-scores tr:hover {
+  background-color: #bbdefb;
+}
+
+.team-scores button {
+  margin-bottom: 10px;
+  padding: 6px 12px;
+  background-color: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.team-scores button:hover {
+  background-color: #0d47a1;
+}

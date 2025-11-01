@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Dunmurry.WinterLeague.Web")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+69a5871a989e7a900463edcbec487ce65ee9aab8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+23c54f592be97da5c80a31193396b90a7680dbc8")]
 [assembly: System.Reflection.AssemblyProductAttribute("Dunmurry.WinterLeague.Web")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Dunmurry.WinterLeague.Web")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

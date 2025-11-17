@@ -14,12 +14,16 @@ export default function TeamScores({ team, roundId, onClose }) {
             .catch(err => console.error(err));
     }, [team, roundId]);
 
-
+const qualifyingTotal = scores
+    .filter(g => g.qualifying)
+    .reduce((sum, g) => sum + (g.bestScore ?? 0), 0);
 
     return (
         <div className="mt-6 p-4 bg-gray-50 rounded-lg shadow-md max-w-3xl mx-auto">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="text-2xl font-semibold text-gray-800">Scores</h3>
+                <h3 className="text-2xl font-semibold text-gray-800">
+  Scores (Round Total: {qualifyingTotal})
+</h3>
                 <button
                     className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-800"
                     onClick={onClose}

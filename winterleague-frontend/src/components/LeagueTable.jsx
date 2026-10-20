@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import TeamScores from './TeamScores';
 import { getLeagueTable, getRounds } from '../api';
-import './LeagueTable.css'; // ensure this is imported
+
+const headerCell = 'p-2 sm:px-4 sm:py-3 text-left text-xs sm:text-sm font-medium text-white uppercase';
+const bodyCell = 'p-2 sm:px-4 sm:py-3 text-xs sm:text-base whitespace-nowrap';
 
 export default function LeagueTable() {
   const [table, setTable] = useState([]);
@@ -9,11 +11,13 @@ export default function LeagueTable() {
   const [rounds, setRounds] = useState([]);
   const [selectedRound, setSelectedRound] = useState(null);
 
-  // Fetch rounds on mount
+  // Fetch rounds on mount and default to the latest one
   useEffect(() => {
     getRounds().then(res => {
       setRounds(res.data);
-      setSelectedRound(res.data.length);
+      if (res.data.length > 0) {
+        setSelectedRound(Math.max(...res.data.map(r => r.roundId)));
+      }
     });
   }, []);
 
@@ -29,18 +33,17 @@ export default function LeagueTable() {
   };
 
   return (
-    <div className="table-container p-4">
+    <div className="w-[95%] min-[1600px]:w-[85%] max-w-[1400px] my-5 mx-auto p-4 rounded-xl overflow-x-auto shadow-[0_4px_12px_rgba(0,0,0,0.1)] bg-white/35 backdrop-blur-sm">
       <h2 className="text-3xl font-bold mb-4 text-center text-blue-800">League Table</h2>
 
       {/* Round selector */}
       <div className="mb-4">
         <label className="mr-2 font-semibold">Select Round:</label>
         <select
-          value={selectedRound || ''}
+          value={selectedRound ?? ''}
           onChange={e => setSelectedRound(Number(e.target.value))}
           className="border px-2 py-1 rounded"
         >
-          <option value="">Latest</option>
           {rounds.map(r => (
             <option key={r.roundId} value={r.roundId}>{r.name}</option>
           ))}
@@ -48,47 +51,45 @@ export default function LeagueTable() {
       </div>
 
       {/* League table */}
-        <table className="league-table min-w-full divide-y divide-gray-200">
-          <thead className="bg-blue-700">
-            <tr>
-              <th className="px-3 py-3 text-left text-xs font-medium text-white uppercase">Pos</th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-white uppercase">Team</th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-white uppercase">Pts</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200">
-            {table.map((team, index) => (
-              <React.Fragment key={team.teamId}>
-                <tr
-                  className="hover:bg-blue-50 cursor-pointer"
-                  onClick={() => handleTeamClick(team.teamId)}
-                >
-                  <td className="px-3 py-4 whitespace-nowrap">{index + 1}</td>
-                  <td className="px-3 py-4 whitespace-nowrap">
-                    <span className="text-blue-600 hover:text-blue-900 font-semibold underline">
-                      {team.teamName}
-                    </span>
-                  </td>
-                  <td className="px-3 py-4 whitespace-nowrap">{team.totalPoints}</td>
-                </tr>
+      <table className="w-full border-collapse">
+        <thead className="bg-[rgba(25,118,210,0.85)]">
+          <tr>
+            <th className={headerCell}>Pos</th>
+            <th className={headerCell}>Team</th>
+            <th className={headerCell}>Pts</th>
+          </tr>
+        </thead>
+        <tbody>
+          {table.map((team, index) => (
+            <React.Fragment key={team.teamId}>
+              <tr
+                className={`${index % 2 ? 'bg-neutral-100/60' : 'bg-white/60'} hover:bg-blue-50/60 cursor-pointer`}
+                onClick={() => handleTeamClick(team.teamId)}
+              >
+                <td className={bodyCell}>{index + 1}</td>
+                <td className={bodyCell}>
+                  <span className="text-blue-600 hover:text-blue-900 font-semibold underline">
+                    {team.teamName}
+                  </span>
+                </td>
+                <td className={bodyCell}>{team.totalPoints}</td>
+              </tr>
 
-                {expandedTeamId === team.teamId && (
-                  <tr>
-                    <td colSpan={3} className="p-0">
-                      <div className="team-scores-container">
-                        <TeamScores
-                          team={team}
-                          roundId={selectedRound}
-                          onClose={() => setExpandedTeamId(null)}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
+              {expandedTeamId === team.teamId && (
+                <tr>
+                  <td colSpan={3} className="p-0">
+                    <TeamScores
+                      team={team}
+                      roundId={selectedRound}
+                      onClose={() => setExpandedTeamId(null)}
+                    />
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

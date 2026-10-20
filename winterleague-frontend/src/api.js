@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL, // adjust to your API host
+  baseURL: 'http://127.0.0.1:5248/api', // adjust to your API host
 });
 
 export const getLeagueTable = (roundId) => roundId ? api.get(`/league/table?roundId=${roundId}`) : api.get('/league/table') ;

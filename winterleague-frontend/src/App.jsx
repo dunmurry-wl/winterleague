@@ -7,7 +7,7 @@ function App() {
       {/* Fixed full viewport background, dimmed for readability */}
       <div
         className="fixed inset-0 z-0 bg-cover bg-top bg-no-repeat brightness-[.7]"
-        style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/background.jpg)` }}
+        style={{ backgroundImage: `url(${import.meta.env.BASE_URL}images/background.jpg)` }}
       />
 
       {/* Overlay for translucency */}
@@ -16,7 +16,7 @@ function App() {
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center w-full">
         <img
-          src={`${process.env.PUBLIC_URL}/images/crest.png`}
+          src={`${import.meta.env.BASE_URL}images/crest.png`}
           alt="Dunmurry Winter League Logo"
           className="w-[150px] mb-4"
         />

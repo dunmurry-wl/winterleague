@@ -8,7 +8,7 @@ export default function TeamScores({ team, roundId, onClose }) {
     useEffect(() => {
         if (teamId == null || roundId == null) return;
         getTeamScores(teamId, roundId)
-            .then(res => setScores(res.data))
+            .then(setScores)
             .catch(err => console.error(err));
     }, [teamId, roundId]);
 

@@ -40,7 +40,7 @@ flowchart TD
     API -.->|golfer best scores and qualifying flags| TEAM
 
     subgraph STATIC[Static hosting]
-        DB["public/winterleague.db<br/>Database snapshot"]
+        DB["winterleague.&lt;hash&gt;.db<br/>Built from database/winterleague.db"]
         WASM["sql.js WASM asset<br/>Bundled by Vite"]
     end
 
@@ -51,7 +51,10 @@ flowchart TD
 
 The `api.js` name refers to a local JavaScript module. Its network request
 downloads a static database file; the league queries run inside the browser.
-`VITE_DB_FILE` can select another database, such as the local test-data snapshot.
+The source database lives in `database/winterleague.db` at the repository root;
+the build publishes a content-hashed copy. During development Vite serves the
+source database directly. `VITE_DB_FILE=winterleague.test.db` selects the test-data
+snapshot in `database/winterleague.test.db`, served by the same development plugin.
 The module shares one database-loading promise across callers and clears it if
 loading fails so a later call can retry.
 

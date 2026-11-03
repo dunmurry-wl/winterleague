@@ -1,17 +1,15 @@
 import initSqlJs from 'sql.js';
 import wasmUrl from 'sql.js/dist/sql-wasm-browser.wasm?url';
+import dbFile from 'virtual:winterleague-db';
 import * as queries from './data/queries';
-
-// Overridable for local testing, e.g. `npm run dev:testdata` uses winterleague.test.db
-const DB_FILE = import.meta.env.VITE_DB_FILE || 'winterleague.db';
 
 let dbPromise;
 
 async function loadDb() {
   const [SQL, response] = await Promise.all([
     initSqlJs({ locateFile: () => wasmUrl }),
-    // no-cache: revalidate so a newly deployed database shows up straight away
-    fetch(`${import.meta.env.BASE_URL}${DB_FILE}`, { cache: 'no-cache' }),
+    // Builds use a content-hashed filename, so unchanged data can use HTTP caching.
+    fetch(`${import.meta.env.BASE_URL}${dbFile}`),
   ]);
   if (!response.ok) throw new Error(`Failed to load league database (${response.status})`);
   return new SQL.Database(new Uint8Array(await response.arrayBuffer()));

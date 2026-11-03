@@ -54,10 +54,10 @@ describe('getLeagueTableByTotalScore', () => {
     ]);
   });
 
-  test("counts only each team's top 5 golfers in a round", () => {
+  test("counts only each team's top 4 golfers in a round", () => {
     [30, 25, 20, 15, 10, 5].forEach((points, i) => addScore(i + 1, WEEK_1, '2026-11-01', points));
 
-    expect(getLeagueTableByTotalScore(db, WEEK_1)[0]).toEqual({ teamId: 1, teamName: 'Eagles', totalPoints: 100 });
+    expect(getLeagueTableByTotalScore(db, WEEK_1)[0]).toEqual({ teamId: 1, teamName: 'Eagles', totalPoints: 90 });
   });
 
   test("counts only a golfer's best score in a round", () => {
@@ -67,12 +67,12 @@ describe('getLeagueTableByTotalScore', () => {
     expect(getLeagueTableByTotalScore(db, WEEK_1)[0]).toEqual({ teamId: 2, teamName: 'Birdies', totalPoints: 32 });
   });
 
-  test('picks the top 5 separately in each round', () => {
-    // Fay is 6th in week 1 but in the top 5 in week 2
+  test('picks the top 4 separately in each round', () => {
+    // Fay is 6th in week 1 but in the top 4 in week 2
     [30, 25, 20, 15, 10, 5].forEach((points, i) => addScore(i + 1, WEEK_1, '2026-11-01', points));
     addScore(6, WEEK_2, '2026-11-08', 40);
 
-    expect(getLeagueTableByTotalScore(db, WEEK_2)[0].totalPoints).toBe(140);
+    expect(getLeagueTableByTotalScore(db, WEEK_2)[0].totalPoints).toBe(130);
   });
 
   test('includes rounds up to and including the selected one, by date', () => {
@@ -99,6 +99,65 @@ describe('getLeagueTableByPosition', () => {
   const table = (roundId) => getLeagueTableByPosition(db, roundId)
     .map(t => [t.teamName, t.totalPoints]);
 
+  function scoreTeam(teamId, scores, roundId = WEEK_1) {
+    const firstId = db.exec('SELECT MAX(golfer_id) + 1 FROM golfer')[0].values[0][0];
+    scores.forEach((points, i) => {
+      const id = firstId + i;
+      db.run('INSERT INTO golfer (golfer_id, team_id, name) VALUES (?, ?, ?)',
+        [id, teamId, `Countback golfer ${id}`]);
+      addScore(id, roundId, roundId === WEEK_1 ? '2026-11-01' : '2026-11-08', points);
+    });
+    return firstId;
+  }
+
+  test.each([
+    ['5th-best score', [30, 25, 20, 15, 10], [30, 25, 20, 15, 9]],
+    ['6th-best score', [30, 25, 20, 15, 10, 8], [30, 25, 20, 15, 10, 7]],
+    ['8th-best score', [30, 25, 20, 15, 10, 8, 6, 4], [30, 25, 20, 15, 10, 8, 6, 3]],
+    ['earlier countback before number of scores', [30, 25, 20, 15, 10], [30, 25, 20, 15, 9, 8, 7]],
+    ['an extra 6th score', [30, 25, 20, 15, 10, 0], [30, 25, 20, 15, 10]],
+    ['an extra 5th score of zero', [30, 25, 20, 15, 0], [30, 25, 20, 15]],
+    ['an extra negative score', [30, 25, 20, 15, -1], [30, 25, 20, 15]],
+    ['qualifying total before countback', [30, 25, 20, 15], [29, 25, 20, 15, 14, 13]],
+  ])('breaks ties using %s, regardless of team order', (_name, winner, loser) => {
+    scoreTeam(1, winner);
+    scoreTeam(2, loser);
+    expect(table(WEEK_1)).toEqual([['Eagles', 18], ['Birdies', 16], ['Bogeys', 0]]);
+
+    // Swap the scores between teams to check both directions of the comparison.
+    db.run('UPDATE golfer SET team_id = CASE team_id WHEN 1 THEN 2 WHEN 2 THEN 1 ELSE team_id END');
+    expect(table(WEEK_1)).toEqual([['Birdies', 18], ['Eagles', 16], ['Bogeys', 0]]);
+  });
+
+  test('identical score lists still share first place and skip second place', () => {
+    scoreTeam(1, [30, 25, 20, 15, 10, 8, 6]);
+    scoreTeam(2, [30, 25, 20, 15, 10, 8, 6]);
+    scoreTeam(3, [20]);
+    expect(table(WEEK_1)).toEqual([['Birdies', 18], ['Eagles', 18], ['Bogeys', 14]]);
+  });
+
+  test('compares the qualifying total rather than individual top-four scores', () => {
+    scoreTeam(1, [30, 25, 20, 15, 10]);
+    scoreTeam(2, [29, 26, 20, 15, 10]);
+    expect(table(WEEK_1)).toEqual([['Birdies', 18], ['Eagles', 18], ['Bogeys', 0]]);
+  });
+
+  test('repeat submissions by one golfer do not count as additional golfers', () => {
+    const firstId = scoreTeam(1, [30, 25, 20, 15, 10]);
+    scoreTeam(2, [30, 25, 20, 15, 10]);
+    addScore(firstId + 4, WEEK_1, '2026-11-03', 9);
+    expect(table(WEEK_1)).toEqual([['Birdies', 18], ['Eagles', 18], ['Bogeys', 0]]);
+  });
+
+  test('countback is independent in each round and uses only rounds through the selected one', () => {
+    scoreTeam(1, [30, 25, 20, 15, 10]);
+    scoreTeam(2, [30, 25, 20, 15, 9]);
+    scoreTeam(1, [30, 25, 20, 15, 8], WEEK_2);
+    scoreTeam(2, [30, 25, 20, 15, 10], WEEK_2);
+    expect(table(WEEK_1)).toEqual([['Eagles', 18], ['Birdies', 16], ['Bogeys', 0]]);
+    expect(table(WEEK_2)).toEqual([['Birdies', 34], ['Eagles', 34], ['Bogeys', 0]]);
+  });
+
   test('lists every team with 0 points before any scores', () => {
     expect(table(WEEK_1)).toEqual([['Birdies', 0], ['Bogeys', 0], ['Eagles', 0]]);
   });
@@ -110,8 +169,8 @@ describe('getLeagueTableByPosition', () => {
     expect(table(WEEK_1)).toEqual([['Eagles', 18], ['Birdies', 16], ['Bogeys', 0]]);
   });
 
-  test("ranks teams on their top 5 golfers' best scores", () => {
-    // Eagles' top 5 make 90 (Fay's 6th-best 10 doesn't count), beaten by Birdies' 95
+  test("ranks teams on their top 4 golfers' best scores", () => {
+    // Eagles' top 4 make 80 (the remaining 10s don't count), beaten by Birdies' 95
     [50, 10, 10, 10, 10, 10].forEach((points, i) => addScore(i + 1, WEEK_1, '2026-11-01', points));
     addScore(7, WEEK_1, '2026-11-01', 50);
     addScore(8, WEEK_1, '2026-11-01', 40);
@@ -155,7 +214,7 @@ describe('getLeagueTableByPosition', () => {
 });
 
 describe('getTeamScores', () => {
-  test("returns each golfer's best score for the round, marking the top 5 as qualifying", () => {
+  test("returns each golfer's best score for the round, marking the top 4 as qualifying", () => {
     [30, 25, 20, 15, 10, 5].forEach((points, i) => addScore(i + 1, WEEK_1, '2026-11-01', points));
     addScore(6, WEEK_1, '2026-11-03', 8);   // Fay's better score that week
     addScore(1, WEEK_2, '2026-11-08', 99);  // different round, ignored
@@ -165,7 +224,7 @@ describe('getTeamScores', () => {
       { golferId: 2, golferName: 'Bob', bestScore: 25, qualifying: true },
       { golferId: 3, golferName: 'Cat', bestScore: 20, qualifying: true },
       { golferId: 4, golferName: 'Dan', bestScore: 15, qualifying: true },
-      { golferId: 5, golferName: 'Eve', bestScore: 10, qualifying: true },
+      { golferId: 5, golferName: 'Eve', bestScore: 10, qualifying: false },
       { golferId: 6, golferName: 'Fay', bestScore: 8, qualifying: false },
     ]);
   });

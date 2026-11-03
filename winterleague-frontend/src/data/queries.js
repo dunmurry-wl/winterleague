@@ -1,5 +1,5 @@
 // League business logic, run against the SQLite database with sql.js.
-// Each golfer's best score in a round counts; a team's top 5 golfers in a round qualify,
+// Each golfer's best score in a round counts; a team's top 4 golfers in a round qualify,
 // and their scores add up to the team's round score.
 
 const QUALIFYING_GOLFERS = 4;
@@ -59,13 +59,36 @@ export function getRounds(db) {
 }
 
 // Current format: teams are ranked by round score in each round and earn the points
-// in round_position_points for their position. Tied teams share the higher position;
-// positions with no entry earn 0.
+// in round_position_points for their position. Equal totals use countback: compare
+// the 5th-best score, then the 6th, etc. An extra score beats a missing score.
+// Teams still tied share the higher position; positions with no entry earn 0.
 export function getLeagueTableByPosition(db, roundId) {
   return leagueTable(db, roundId, `
     positions AS (
-      SELECT team_id, RANK() OVER (PARTITION BY round_id ORDER BY round_score DESC) AS position
-      FROM team_round
+      SELECT team_score.team_id, 1 + (
+        SELECT COUNT(*)
+        FROM team_round rival
+        WHERE rival.round_id = team_score.round_id
+          AND (
+            rival.round_score > team_score.round_score
+            OR (rival.round_score = team_score.round_score AND (
+              -- The first differing non-qualifying score decides whether the rival wins.
+              SELECT CASE WHEN own.best_score IS NULL THEN 1
+                          ELSE extra.best_score > own.best_score END
+              FROM ranked extra
+              LEFT JOIN ranked own ON own.team_id = team_score.team_id
+                                  AND own.round_id = extra.round_id
+                                  AND own.rank = extra.rank
+              WHERE extra.team_id = rival.team_id
+                AND extra.round_id = rival.round_id
+                AND extra.rank > $qualifying
+                AND (own.best_score IS NULL OR extra.best_score <> own.best_score)
+              ORDER BY extra.rank
+              LIMIT 1
+            ) = 1)
+          )
+      ) AS position
+      FROM team_round team_score
     ),
     totals AS (
       SELECT p.team_id, SUM(COALESCE(pp.points, 0)) AS total_points
@@ -85,7 +108,7 @@ export function getLeagueTableByTotalScore(db, roundId) {
     )`);
 }
 
-// Each golfer's best score for one team in one round, best first; the top 5 are qualifying.
+// Each golfer's best score for one team in one round, best first; the top 4 are qualifying.
 export function getTeamScores(db, teamId, roundId) {
   return all(db, `
     WITH best AS (

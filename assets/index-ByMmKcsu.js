@@ -37,8 +37,30 @@ Error generating stack: `+e.message+`
     FROM round
     ORDER BY start_date`)}function ie(e,t){return ne(e,t,`
     positions AS (
-      SELECT team_id, RANK() OVER (PARTITION BY round_id ORDER BY round_score DESC) AS position
-      FROM team_round
+      SELECT team_score.team_id, 1 + (
+        SELECT COUNT(*)
+        FROM team_round rival
+        WHERE rival.round_id = team_score.round_id
+          AND (
+            rival.round_score > team_score.round_score
+            OR (rival.round_score = team_score.round_score AND (
+              -- The first differing non-qualifying score decides whether the rival wins.
+              SELECT CASE WHEN own.best_score IS NULL THEN 1
+                          ELSE extra.best_score > own.best_score END
+              FROM ranked extra
+              LEFT JOIN ranked own ON own.team_id = team_score.team_id
+                                  AND own.round_id = extra.round_id
+                                  AND own.rank = extra.rank
+              WHERE extra.team_id = rival.team_id
+                AND extra.round_id = rival.round_id
+                AND extra.rank > $qualifying
+                AND (own.best_score IS NULL OR extra.best_score <> own.best_score)
+              ORDER BY extra.rank
+              LIMIT 1
+            ) = 1)
+          )
+      ) AS position
+      FROM team_round team_score
     ),
     totals AS (
       SELECT p.team_id, SUM(COALESCE(pp.points, 0)) AS total_points

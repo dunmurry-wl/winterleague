@@ -3,7 +3,29 @@ import TeamScores from './TeamScores';
 import { getLeagueTable, getRounds } from '../api';
 
 const headerCell = 'p-2 sm:px-4 sm:py-3 text-left text-xs sm:text-sm font-medium text-white uppercase';
-const bodyCell = 'p-2 sm:px-4 sm:py-3 text-xs sm:text-base whitespace-nowrap';
+const cellLayout = 'p-2 sm:px-4 sm:py-3 whitespace-nowrap';
+const bodyCell = `${cellLayout} text-xs sm:text-base`;
+const primaryCell = `${bodyCell} font-bold`;
+const scoreTotalCell = `${cellLayout} text-[0.6875rem] sm:text-sm text-gray-600 tabular-nums`;
+
+function formatRoundScore(team, table) {
+  const scores = team.countbackScores ?? [];
+  let countbackDepth = 0;
+
+  for (const rival of table) {
+    if (rival.teamId === team.teamId || rival.roundScore !== team.roundScore) continue;
+    const rivalScores = rival.countbackScores ?? [];
+    const differingIndex = Array.from({ length: Math.max(scores.length, rivalScores.length) })
+      .findIndex((_, index) => scores[index] !== rivalScores[index]);
+    countbackDepth = Math.max(countbackDepth, differingIndex + 1);
+  }
+
+  const countback = Array.from({ length: countbackDepth }, (_, index) => {
+    const score = scores[index];
+    return score == null ? '—' : `${score >= 0 ? '+' : ''}${score}`;
+  });
+  return `${team.roundScore ?? 0}${countback.length ? ` (${countback.join(', ')})` : ''}`;
+}
 
 export default function LeagueTable() {
   const [table, setTable] = useState([]);
@@ -68,6 +90,7 @@ export default function LeagueTable() {
               <tr>
                 <th className={headerCell}>Pos</th>
                 <th className={headerCell}>Team</th>
+                <th className={headerCell} title="Selected round's top-four total; parentheses show tie-break scores, best first">Score Total</th>
                 <th className={headerCell}>Pts</th>
               </tr>
             </thead>
@@ -79,17 +102,18 @@ export default function LeagueTable() {
                     onClick={() => handleTeamClick(team.teamId)}
                   >
                     <td className={bodyCell}>{index + 1}</td>
-                    <td className={bodyCell}>
-                      <span className="text-blue-600 hover:text-blue-900 font-semibold underline">
+                    <td className={primaryCell}>
+                      <span className="text-blue-600 hover:text-blue-900 underline">
                         {team.teamName}
                       </span>
                     </td>
-                    <td className={bodyCell}>{team.totalPoints}</td>
+                    <td className={scoreTotalCell}>{formatRoundScore(team, table)}</td>
+                    <td className={`${primaryCell} tabular-nums`}>{team.totalPoints}</td>
                   </tr>
 
                   {expandedTeamId === team.teamId && (
                     <tr>
-                      <td colSpan={3} className="p-0">
+                      <td colSpan={4} className="p-0">
                         <TeamScores
                           team={team}
                           roundId={selectedRound}

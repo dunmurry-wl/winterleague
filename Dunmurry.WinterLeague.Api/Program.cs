@@ -25,7 +25,8 @@ builder.Services.AddCors(options =>
                        origin.StartsWith("https://localhost:3000") ||
                        origin.StartsWith("https://127.0.0.1:3000") ||
                        origin.StartsWith("https://192.168.") ||
-                       origin.StartsWith("https://10.");
+                       origin.StartsWith("https://10.") ||
+                       origin.StartsWith("https://dunmurry-wl.github.io");
             })
             .AllowAnyHeader()
             .AllowAnyMethod();
@@ -34,7 +35,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("ProdPolicy", policy =>
     {
         policy
-            .WithOrigins("https://myapp.com", "https://www.myapp.com")
+            .WithOrigins("https://dunmurry-wl.github.io")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

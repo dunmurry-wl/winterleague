@@ -17,8 +17,7 @@ public class WinterLeagueContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.HasDefaultSchema("golf");
-
+        // Tables are created by database/schema.sql, not EF migrations.
         modelBuilder.Entity<Team>().ToTable("team").HasKey(t => t.Id);
         modelBuilder.Entity<Golfer>().ToTable("golfer").HasKey(g => g.GolferId);
         modelBuilder.Entity<Score>().ToTable("score").HasKey(s => s.Id);

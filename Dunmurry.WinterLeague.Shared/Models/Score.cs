@@ -16,5 +16,5 @@ public class Score
     public Golfer Golfer { get; set; }
     public Round Round { get; set; }
     [Column("played_on")]
-    public DateTime PlayedOn { get; set; }
+    public DateOnly PlayedOn { get; set; }
 }

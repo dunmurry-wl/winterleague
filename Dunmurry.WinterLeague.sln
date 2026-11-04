@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dunmurry.WinterLeague.Round
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dunmurry.WinterLeague.Shared", "Dunmurry.WinterLeague.Shared\Dunmurry.WinterLeague.Shared.csproj", "{2F04687E-A0B2-495D-933C-C2950B67DEDB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,18 @@ Global
 		{2F04687E-A0B2-495D-933C-C2950B67DEDB}.Release|x64.Build.0 = Release|Any CPU
 		{2F04687E-A0B2-495D-933C-C2950B67DEDB}.Release|x86.ActiveCfg = Release|Any CPU
 		{2F04687E-A0B2-495D-933C-C2950B67DEDB}.Release|x86.Build.0 = Release|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Debug|x64.Build.0 = Debug|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Debug|x86.Build.0 = Debug|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Release|x64.ActiveCfg = Release|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Release|x64.Build.0 = Release|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Release|x86.ActiveCfg = Release|Any CPU
+		{7F0AA2F1-0B56-485E-8635-45747EBFDC9D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

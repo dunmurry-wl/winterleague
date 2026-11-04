@@ -49,12 +49,12 @@ public class EfLeagueRepository : ILeagueRepository
             // Step 3: aggregate team totals
             var teamTotals =
                 (from r in ranked
-                group r by new { r.TeamId, r.RoundId } into g
-                select new
-                {
-                    g.Key.TeamId,
-                    TotalPoints = g.Sum(x => x.BestScore)
-                }).ToList();
+                    group r by r.TeamId into g
+                    select new
+                    {
+                        TeamId = g.Key,
+                        TotalPoints = g.Sum(x => x.BestScore)
+                    }).ToList();
 
             // Step 4: join to teams for display info
             var table =

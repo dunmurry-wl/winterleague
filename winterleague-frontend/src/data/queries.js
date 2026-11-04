@@ -44,11 +44,22 @@ function leagueTable(db, roundId, totalsCte) {
   return all(db, `
     WITH ${TEAM_ROUND_SCORES},
     ${totalsCte}
-    SELECT t.team_id AS teamId, t.name AS teamName, COALESCE(totals.total_points, 0) AS totalPoints
+    SELECT t.team_id AS teamId, t.name AS teamName, COALESCE(totals.total_points, 0) AS totalPoints,
+           COALESCE(selected.round_score, 0) AS roundScore,
+           (SELECT GROUP_CONCAT(best_score) FROM (
+             SELECT best_score FROM ranked
+             WHERE team_id = t.team_id AND round_id = $roundId AND rank > $qualifying
+             ORDER BY rank
+           )) AS countbackScores
     FROM team t
     LEFT JOIN totals ON totals.team_id = t.team_id
+    LEFT JOIN team_round selected ON selected.team_id = t.team_id AND selected.round_id = $roundId
     ORDER BY totalPoints DESC, teamName`,
-    { $roundId: roundId, $qualifying: QUALIFYING_GOLFERS });
+    { $roundId: roundId, $qualifying: QUALIFYING_GOLFERS })
+    .map(row => ({
+      ...row,
+      countbackScores: row.countbackScores == null ? [] : row.countbackScores.split(',').map(Number),
+    }));
 }
 
 export function getRounds(db) {

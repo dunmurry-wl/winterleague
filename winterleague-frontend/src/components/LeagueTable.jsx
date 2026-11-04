@@ -92,9 +92,9 @@ export default function LeagueTable() {
                 <th className={headerCell}>Pos</th>
                 <th className={headerCell}>Team</th>
                 <th className={headerCell}>
-                  <Tooltip label="Score Total">
-                    <p>The selected week’s total of the best four golfers’ scores. Each golfer’s best score that week counts.</p>
-                    <p className="mt-2">If totals are tied, compare the fifth-best score, then the sixth, and so on until the tie is broken. A submitted score beats a missing score. Teams still tied share the higher position.</p>
+                  <Tooltip label="Scores">
+                    <p>The selected week’s total of the best four golfers’ scores.</p>
+                    <p className="mt-2">If totals are tied, compare the fifth-best score, then the sixth, and so on until the tie is broken. Teams still tied share the higher position.</p>
                     <p className="mt-2">Parentheses show the countback scores used, best first: 133 (+25) beats 133 (+23). These scores are not added to the qualifying total. A dash (—) means no further score.</p>
                     <p className="mt-2">Pts shows the team’s cumulative league points through the selected week.</p>
                   </Tooltip>

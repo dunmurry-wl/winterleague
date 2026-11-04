@@ -48,23 +48,27 @@ describe('getRounds', () => {
 describe('getLeagueTableByTotalScore', () => {
   test('lists every team with 0 points before any scores', () => {
     expect(getLeagueTableByTotalScore(db, WEEK_1)).toEqual([
-      { teamId: 2, teamName: 'Birdies', totalPoints: 0 },
-      { teamId: 3, teamName: 'Bogeys', totalPoints: 0 },
-      { teamId: 1, teamName: 'Eagles', totalPoints: 0 },
+      { teamId: 2, teamName: 'Birdies', totalPoints: 0, roundScore: 0, countbackScores: [] },
+      { teamId: 3, teamName: 'Bogeys', totalPoints: 0, roundScore: 0, countbackScores: [] },
+      { teamId: 1, teamName: 'Eagles', totalPoints: 0, roundScore: 0, countbackScores: [] },
     ]);
   });
 
   test("counts only each team's top 4 golfers in a round", () => {
     [30, 25, 20, 15, 10, 5].forEach((points, i) => addScore(i + 1, WEEK_1, '2026-11-01', points));
 
-    expect(getLeagueTableByTotalScore(db, WEEK_1)[0]).toEqual({ teamId: 1, teamName: 'Eagles', totalPoints: 90 });
+    expect(getLeagueTableByTotalScore(db, WEEK_1)[0]).toEqual({
+      teamId: 1, teamName: 'Eagles', totalPoints: 90, roundScore: 90, countbackScores: [10, 5],
+    });
   });
 
   test("counts only a golfer's best score in a round", () => {
     addScore(7, WEEK_1, '2026-11-01', 18);
     addScore(7, WEEK_1, '2026-11-04', 32);
 
-    expect(getLeagueTableByTotalScore(db, WEEK_1)[0]).toEqual({ teamId: 2, teamName: 'Birdies', totalPoints: 32 });
+    expect(getLeagueTableByTotalScore(db, WEEK_1)[0]).toEqual({
+      teamId: 2, teamName: 'Birdies', totalPoints: 32, roundScore: 32, countbackScores: [],
+    });
   });
 
   test('picks the top 4 separately in each round', () => {
@@ -156,6 +160,21 @@ describe('getLeagueTableByPosition', () => {
     scoreTeam(2, [30, 25, 20, 15, 10], WEEK_2);
     expect(table(WEEK_1)).toEqual([['Eagles', 18], ['Birdies', 16], ['Bogeys', 0]]);
     expect(table(WEEK_2)).toEqual([['Birdies', 34], ['Eagles', 34], ['Bogeys', 0]]);
+  });
+
+  test('returns selected-round qualifying totals and ordered countback scores alongside cumulative points', () => {
+    scoreTeam(1, [30, 25, 20, 15, 10]);
+    const firstId = scoreTeam(1, [40, 35, 30, 28, 25, 23], WEEK_2);
+    addScore(firstId + 4, WEEK_2, '2026-11-09', 24);
+    scoreTeam(1, [50, 45, 40, 35, 30], WEEK_3);
+
+    expect(getLeagueTableByPosition(db, WEEK_2).find(t => t.teamId === 1)).toEqual({
+      teamId: 1, teamName: 'Eagles', totalPoints: 36,
+      roundScore: 133, countbackScores: [25, 23],
+    });
+    expect(getLeagueTableByPosition(db, WEEK_3).find(t => t.teamId === 2)).toMatchObject({
+      roundScore: 0, countbackScores: [],
+    });
   });
 
   test('lists every team with 0 points before any scores', () => {

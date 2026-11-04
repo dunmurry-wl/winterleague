@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TeamScores from './TeamScores';
+import Tooltip from './Tooltip';
 import { getLeagueTable, getRounds } from '../api';
 
 const headerCell = 'p-2 sm:px-4 sm:py-3 text-left text-xs sm:text-sm font-medium text-white uppercase';
@@ -90,7 +91,14 @@ export default function LeagueTable() {
               <tr>
                 <th className={headerCell}>Pos</th>
                 <th className={headerCell}>Team</th>
-                <th className={headerCell} title="Selected round's top-four total; parentheses show tie-break scores, best first">Score Total</th>
+                <th className={headerCell}>
+                  <Tooltip label="Score Total">
+                    <p>The selected week’s total of the best four golfers’ scores. Each golfer’s best score that week counts.</p>
+                    <p className="mt-2">If totals are tied, compare the fifth-best score, then the sixth, and so on until the tie is broken. A submitted score beats a missing score. Teams still tied share the higher position.</p>
+                    <p className="mt-2">Parentheses show the countback scores used, best first: 133 (+25) beats 133 (+23). These scores are not added to the qualifying total. A dash (—) means no further score.</p>
+                    <p className="mt-2">Pts shows the team’s cumulative league points through the selected week.</p>
+                  </Tooltip>
+                </th>
                 <th className={headerCell}>Pts</th>
               </tr>
             </thead>

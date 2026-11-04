@@ -80,7 +80,7 @@ export default function Tooltip({ label, children }) {
         ref={triggerRef}
         type="button"
         aria-describedby={open ? id : undefined}
-        className="inline-flex min-h-11 items-center gap-1 rounded text-left uppercase underline decoration-dotted underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+        className="inline-flex min-h-11 items-center rounded text-left uppercase underline decoration-dotted underline-offset-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
         onPointerEnter={event => {
           if (event.pointerType !== 'mouse') return;
           clearTimer();
@@ -107,7 +107,6 @@ export default function Tooltip({ label, children }) {
         }}
       >
         {label}
-        <span aria-hidden="true" className="text-sm">ⓘ</span>
       </button>
       {open && createPortal(
         <div
